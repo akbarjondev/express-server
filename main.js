@@ -20,22 +20,18 @@ app.get('/search', (request, response) => {
 
 	const { query } = request.query
 
-	;(async () => {
+	if(query !== undefined) {
+		;(async () => {
 
-		const rawData = await database.read()
-		const data = JSON.parse(rawData).filter(fr => fr.fruit === query.toLowerCase())
+			const rawData = await database.read()
+			const data = JSON.parse(rawData).filter(fr => fr.fruit === query.toLowerCase())
+			// const data = JSON.parse(rawData).map(fr => {return fr.fruit.match(new RegExp(query, 'gi')) })
 
-		let output = ''
-
-		if(data.length > 0) {
-			data.forEach(d => output += d.fruit + ' is ' + d.price + '\n')
-		} else {
-			output += 'Data not found :('
-		}
-
-		response.send(`Searched fruit: ${query} \n ${output}`)
-	})()
-
+			response.send(data)
+		})()
+	} else {
+		response.send([{response: 'query is undefined'}])
+	}
 })
 
 app.listen(PORT, () => console.log(`Server ready at ${PORT}`))
